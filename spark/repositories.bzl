@@ -1,0 +1,50 @@
+
+#SPARK_ARCHIVE="https://github.com/apache-spark-on-k8s/spark/releases/download/v2.2.0-kubernetes-0.5.0/spark-2.2.0-k8s-0.5.0-bin-with-hadoop-2.7.3.tgz"
+#SPARK_ARCHIVE_SHA256="a1a40fae019e50db7468b55bfba89c3cfa01483c5eb2c6c5220d019bf395468d"
+#SPARK_ARCHIVE_PREFIX="spark-2.2.0-k8s-0.5.0-bin-2.7.3"
+
+def spark_rules_dependencies():
+    native.new_http_archive(
+       name = "spark",
+       workspace_file_content = """
+workspace(name = "spark")
+""",
+       build_file_content = """
+package(default_visibility = ["//visibility:public"])
+filegroup (
+   name = "assembly",
+   srcs = glob(["**"]),
+   visibility = ["//visibility:public"],
+)
+java_import(
+   name = "spark_assembly",
+   jars = glob(["jars/*.jar"]),
+   visibility = ["//visibility:public"],
+)
+""",
+       strip_prefix = "spark-2.2.0-k8s-0.5.0-bin-2.7.3",
+       sha256 = "a1a40fae019e50db7468b55bfba89c3cfa01483c5eb2c6c5220d019bf395468d",
+       url = "https://github.com/apache-spark-on-k8s/spark/releases/download/v2.2.0-kubernetes-0.5.0/spark-2.2.0-k8s-0.5.0-bin-with-hadoop-2.7.3.tgz",
+    )
+
+    native.new_http_archive(
+       name = "hadoop",
+       workspace_file_content = """
+workspace(name = "hadoop")
+""",
+       build_file_content = """
+package(default_visibility = ["//visibility:public"])
+filegroup (
+   name = "lib_native",
+   srcs = glob(["lib/native/*"]),
+   visibility = ["//visibility:public"],
+)
+""",
+       strip_prefix = "hadoop-2.7.5",
+       sha256 = "0bfc4d9b04be919be2fdf36f67fa3b4526cdbd406c512a7a1f5f1b715661f831",
+       urls = [
+           "http://apache.claz.org/hadoop/common/hadoop-2.7.5/hadoop-2.7.5.tar.gz",
+           "http://apache.mirrors.tds.net/hadoop/common/hadoop-2.7.5/hadoop-2.7.5.tar.gz",
+           "http://apache.mirrors.ionfish.org/hadoop/common/hadoop-2.7.5/hadoop-2.7.5.tar.gz",
+       ]
+    )

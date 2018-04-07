@@ -34,7 +34,7 @@ spark_submit = rule(
         "namespace": attr.string(),
         "published_image": attr.label(mandatory=True, allow_files=True),
         "_runfiles": attr.label(allow_files=True,
-                                default=Label("@apache_spark_on_k8s//:assembly")),
+                                default=Label("@spark//:assembly")),
         "_template": attr.label(allow_files=True, single_file=True,
                                 default=Label("//spark:k8s-spark-submit.tpl.sh")),
     },

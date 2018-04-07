@@ -5,6 +5,6 @@ scala_spark_app(
     srcs = ["SparkStreamtest.scala"],
     files = [":log4j.properties"],
     image_repository = "netchris/sparkstreamtest",
-    layers = ["@apache_spark_on_k8s//:spark_assembly"],
+    layers = ["@spark//:spark_assembly"],
     main_class = "com.example.sparkstreamtest.SparkStreamtest",
 )

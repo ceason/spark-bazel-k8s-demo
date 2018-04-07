@@ -32,7 +32,7 @@ port-forward-ui(){
 	done
 
 }
-../apache_spark_on_k8s/bin/spark-submit \
+../spark/bin/spark-submit \
   --deploy-mode cluster \
   --class ${MAIN_CLASS} \
   --master k8s://${K8S_SERVER} \
