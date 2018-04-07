@@ -22,9 +22,20 @@ java_import(
    visibility = ["//visibility:public"],
 )
 """,
-       strip_prefix = "spark-2.2.0-k8s-0.5.0-bin-2.7.3",
-       sha256 = "a1a40fae019e50db7468b55bfba89c3cfa01483c5eb2c6c5220d019bf395468d",
-       url = "https://github.com/apache-spark-on-k8s/spark/releases/download/v2.2.0-kubernetes-0.5.0/spark-2.2.0-k8s-0.5.0-bin-with-hadoop-2.7.3.tgz",
+       strip_prefix = "spark-2.3.0-bin-hadoop2.7",
+       sha256 = "5cfbc77d140454c895f2d8125c0a751465f53cbe12720da763b1785d25c63f05",
+       urls = [
+           "http://mirror.stjschools.org/public/apache/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.claz.org/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.cs.utah.edu/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.mesi.com.ar/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.mirrors.hoobly.com/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.mirrors.ionfish.org/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.mirrors.lucidnetworks.net/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.mirrors.pair.com/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.mirrors.tds.net/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+           "http://apache.osuosl.org/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz",
+       ],
     )
 
     native.new_http_archive(
