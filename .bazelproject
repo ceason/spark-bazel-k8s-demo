@@ -1,0 +1,16 @@
+directories:
+  .
+  -target
+
+targets:
+  //...:all
+
+additional_languages:
+  # Uncomment any additional languages you want supported
+  # android
+  # dart
+  # go
+  # javascript
+  scala
+  # typescript
+
