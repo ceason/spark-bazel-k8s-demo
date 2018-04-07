@@ -34,17 +34,17 @@ port-forward-ui(){
 }
 ../spark/bin/spark-submit \
   --deploy-mode cluster \
+  --name ${K8S_APP_NAME} \
   --class ${MAIN_CLASS} \
   --master k8s://${K8S_SERVER} \
-  --kubernetes-namespace ${NAMESPACE} \
   --conf spark.executor.instances=5 \
   --conf spark.app.name=${K8S_APP_NAME} \
-  --conf spark.kubernetes.driver.docker.image=${IMAGE} \
-  --conf spark.kubernetes.docker.image.pullPolicy=Always \
-  --conf spark.kubernetes.executor.docker.image=${IMAGE} \
+  --conf spark.kubernetes.namespace=${NAMESPACE} \
+  --conf spark.kubernetes.container.image=${IMAGE} \
+  --conf spark.kubernetes.container.image.pullPolicy=Always \
   --conf spark.kubernetes.driver.label.app=${K8S_APP_NAME} \
-  --conf spark.kubernetes.executor.label.app=${K8S_APP_NAME} \
   --conf spark.kubernetes.driver.label.spark-submit-id=${SPARK_SUBMIT_ID} \
+  --conf spark.kubernetes.executor.label.app=${K8S_APP_NAME} \
   --conf spark.kubernetes.executor.label.spark-submit-id=${SPARK_SUBMIT_ID} \
   --conf spark.kubernetes.authenticate.driver.serviceAccountName=${K8S_SERVICE_ACCOUNT_NAME} \
   ${K8S_APP_JAR} "$@" &

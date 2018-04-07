@@ -26,28 +26,36 @@ cd $SPARK_HOME/work-dir
 [ -n "${SPARK_MOUNTED_FILES_DIR-}" ] && cp -R "$SPARK_MOUNTED_FILES_DIR/." $SPARK_HOME/work-dir
 [ -n "${SPARK_MOUNTED_FILES_FROM_SECRET_DIR-}" ] && cp -R "$SPARK_MOUNTED_FILES_FROM_SECRET_DIR/." $SPARK_HOME/work-dir
 
-
-if [ -n "${SPARK_EXECUTOR_ID-}" ]; then
-	# run as executor if appropriate
-	exec ${JAVA_HOME}/bin/java \
-      "${SPARK_JAVA_OPTS[@]}" \
-      -Xms$SPARK_EXECUTOR_MEMORY \
-      -Xmx$SPARK_EXECUTOR_MEMORY \
-      -Dspark.executor.port=$SPARK_EXECUTOR_PORT \
-      -cp "$SPARK_CLASSPATH" \
-      org.apache.spark.executor.CoarseGrainedExecutorBackend \
-        --driver-url $SPARK_DRIVER_URL \
-        --executor-id $SPARK_EXECUTOR_ID \
-        --cores $SPARK_EXECUTOR_CORES \
-        --app-id $SPARK_APPLICATION_ID \
-        --hostname $SPARK_EXECUTOR_POD_IP
-else
-	# otherwise run as driver
-	exec ${JAVA_HOME}/bin/java \
-      "${SPARK_JAVA_OPTS[@]}" \
-      -Xms$SPARK_DRIVER_MEMORY \
-      -Xmx$SPARK_DRIVER_MEMORY \
-      -Dspark.driver.bindAddress=$SPARK_DRIVER_BIND_ADDRESS \
-      -cp "$SPARK_CLASSPATH" \
-      $SPARK_DRIVER_CLASS $SPARK_DRIVER_ARGS
-fi
+SPARK_K8S_CMD="$1"
+case "$SPARK_K8S_CMD" in
+	driver)
+		exec ${JAVA_HOME}/bin/java \
+		  "${SPARK_JAVA_OPTS[@]}" \
+		  -Xms$SPARK_DRIVER_MEMORY \
+		  -Xmx$SPARK_DRIVER_MEMORY \
+		  -Dspark.driver.bindAddress=$SPARK_DRIVER_BIND_ADDRESS \
+		  -cp "$SPARK_CLASSPATH" \
+		  $SPARK_DRIVER_CLASS $SPARK_DRIVER_ARGS
+		;;
+	executor)
+		exec ${JAVA_HOME}/bin/java \
+		  "${SPARK_JAVA_OPTS[@]}" \
+		  -Xms$SPARK_EXECUTOR_MEMORY \
+		  -Xmx$SPARK_EXECUTOR_MEMORY \
+		  -cp "$SPARK_CLASSPATH" \
+		  org.apache.spark.executor.CoarseGrainedExecutorBackend \
+			--driver-url $SPARK_DRIVER_URL \
+			--executor-id $SPARK_EXECUTOR_ID \
+			--cores $SPARK_EXECUTOR_CORES \
+			--app-id $SPARK_APPLICATION_ID \
+			--hostname $SPARK_EXECUTOR_POD_IP
+		;;
+	init)
+		echo "Ignoring 'init' command and moving on.."
+		exit 0
+		;;
+	*)
+		echo "Unknown command: $SPARK_K8S_CMD" 1>&2
+		exit 1
+		;;
+esac
