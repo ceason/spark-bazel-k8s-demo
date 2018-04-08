@@ -2,19 +2,19 @@ load("//spark:k8s.bzl", "spark_scala_image")
 load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
 
 spark_scala_image(
-    name = "templatetest",
+    name = "periodicpi",
     srcs = ["Main.scala"],
     base = "//spark:base_image",
     files = [":log4j.properties"],
     layers = ["@spark//:spark_assembly"],
-    main_class = "com.example.templatetest.Main",
+    main_class = "com.example.periodicpi.Main",
 )
 
 k8s_object(
-    name = "deployment",
+    name = "cronjob",
     image_chroot = "{IMAGE_CHROOT}",
     images = {
-        "index.docker.io/netchris/templatetest:dev": ":templatetest",
+        "index.docker.io/netchris/periodicpi:dev": ":periodicpi",
     },
-    template = ":templatetest-deployment.yaml",
+    template = ":periodicpi-cronjob.yaml",
 )
