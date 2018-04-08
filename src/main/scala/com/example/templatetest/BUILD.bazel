@@ -1,0 +1,36 @@
+load("//spark:k8s.bzl", "spark_scala_image")
+load("@io_bazel_rules_docker//scala:image.bzl", "scala_image")
+load("@io_bazel_rules_docker//container:image.bzl", "container_image")
+load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
+load("@io_bazel_rules_k8s//k8s:objects.bzl", "k8s_objects")
+
+spark_scala_image(
+    name = "templatetest",
+    srcs = ["Main.scala"],
+    base = "//spark:base_image",
+    files = [":log4j.properties"],
+    layers = ["@spark//:spark_assembly"],
+    main_class = "com.example.templatetest.Main",
+)
+
+k8s_object(
+    name = "deployment",
+    image_chroot = "{IMAGE_CHROOT}",
+    images = {
+        "index.docker.io/netchris/templatetest:dev": ":templatetest",
+    },
+    template = ":templatetest-deployment.yaml",
+)
+
+k8s_object(
+    name = "configmap",
+    template = ":templatetest-defaults-configmap.yaml",
+)
+
+k8s_objects(
+    name = "k8s-manifests",
+    objects = [
+        ":configmap",
+        ":deployment",
+    ],
+)

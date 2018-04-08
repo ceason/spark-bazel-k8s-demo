@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: templatetest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: templatetest
+      spark-role: driver
+  template:
+    metadata:
+      annotations:
+        spark-app-name: templatetest
+      labels:
+        app: templatetest
+        spark-role: driver
+    spec:
+      containers:
+      - name: spark-kubernetes-driver
+        image: index.docker.io/netchris/templatetest:dev
+        imagePullPolicy: Always
+        terminationMessagePolicy: FallbackToLogsOnError
+        args:
+        - driver
+        envFrom:
+        - configMapRef: {optional: false, name: templatetest-defaults}
+        - configMapRef: {optional: true,  name: templatetest-overrides}
+        env:
+        - name: SPARK_KUBERNETES_DRIVER_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPARK_KUBERNETES_EXECUTOR_PODNAMEPREFIX
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPARK_DRIVER_MEMORY
+          value: 1g
+        - name: SPARK_DRIVER_CLASS
+          value: com.example.templatetest.Main
+        - name: SPARK_DRIVER_ARGS
+          value: 192.168.1.161
+        - name: SPARK_DRIVER_BIND_ADDRESS
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: SPARK_JAVA_OPT_0
+          value: -Dspark.kubernetes.namespace=default
+        - name: SPARK_JAVA_OPT_2
+          value: -Dspark.app.id=templatetest
+        - name: SPARK_JAVA_OPT_3
+          value: -Dspark.submit.deployMode=cluster
+        - name: SPARK_JAVA_OPT_4
+          value: -Dspark.driver.blockManager.port=7079
+        - name: SPARK_JAVA_OPT_6
+          value: -Dspark.kubernetes.authenticate.driver.serviceAccountName=default
+        - name: SPARK_JAVA_OPT_7
+          value: -Dspark.kubernetes.container.image=index.docker.io/netchris/templatetest:dev
+        - name: SPARK_JAVA_OPT_8
+          value: -Dspark.driver.port=7078
+        - name: SPARK_JAVA_OPT_13
+          value: -Dspark.master=k8s://kubernetes.default.svc
+        - name: SPARK_JAVA_OPT_14
+          value: -Dspark.executor.instances=5
+        - name: SPARK_JAVA_OPT_15
+          value: -Dspark.app.name=templatetest
+        - name: SPARK_JAVA_OPT_17
+          value: -Dspark.kubernetes.container.image.pullPolicy=Always
+        resources:
+          limits:
+            memory: 1408Mi
+          requests:
+            cpu: "1"
+            memory: 1Gi

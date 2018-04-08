@@ -98,4 +98,33 @@ def scala_spark_app(name, main_class, image_repository,
 
 
 
+def spark_scala_image(name, main_class,
+           files = [],
+           base = "//spark:base_image",
+           **kwargs):
+    """
+        asdf
+    """
+    scala_image(
+        name = "%s.image" % name,
+#        name = name,
+        base = base,
+        main_class = main_class,
+        **kwargs
+    )
+
+    container_image(
+        name = name,
+        base = ":%s.image" % name,
+#        name = "%s.image" % name,
+#        base = ":%s" % name,
+        cmd = None,
+        directory = "app",
+        entrypoint = ["/entrypoint.sh"],
+        env = {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"},
+        files = files,
+    )
+
+
+
 

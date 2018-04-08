@@ -30,18 +30,21 @@ SPARK_K8S_CMD="$1"
 case "$SPARK_K8S_CMD" in
 	driver)
 		exec ${JAVA_HOME}/bin/java \
-		  "${SPARK_JAVA_OPTS[@]}" \
+		  -Dspark.kubernetes.driver.pod.name=${SPARK_KUBERNETES_DRIVER_POD_NAME:-} \
+		  -Dspark.kubernetes.executor.podNamePrefix=${SPARK_KUBERNETES_EXECUTOR_PODNAMEPREFIX:-} \
+		  -Dspark.driver.host=$SPARK_DRIVER_BIND_ADDRESS \
+		  -Dspark.driver.bindAddress=$SPARK_DRIVER_BIND_ADDRESS \
 		  -Xms$SPARK_DRIVER_MEMORY \
 		  -Xmx$SPARK_DRIVER_MEMORY \
-		  -Dspark.driver.bindAddress=$SPARK_DRIVER_BIND_ADDRESS \
+		  "${SPARK_JAVA_OPTS[@]}" \
 		  -cp "$SPARK_CLASSPATH" \
 		  $SPARK_DRIVER_CLASS $SPARK_DRIVER_ARGS
 		;;
 	executor)
 		exec ${JAVA_HOME}/bin/java \
-		  "${SPARK_JAVA_OPTS[@]}" \
 		  -Xms$SPARK_EXECUTOR_MEMORY \
 		  -Xmx$SPARK_EXECUTOR_MEMORY \
+		  "${SPARK_JAVA_OPTS[@]}" \
 		  -cp "$SPARK_CLASSPATH" \
 		  org.apache.spark.executor.CoarseGrainedExecutorBackend \
 			--driver-url $SPARK_DRIVER_URL \
