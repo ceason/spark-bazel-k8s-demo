@@ -6,7 +6,9 @@ container_image(
     name = "hadoop",
     base = "@openjdk_8//image",
     directory = "opt/hadoop/lib/native",
-    files = ["@hadoop//:lib_native"],
+    files = [
+        "@hadoop//:lib_native",
+    ],
 )
 
 container_image(
@@ -14,12 +16,12 @@ container_image(
     base = ":hadoop",
     cmd = None,
     entrypoint = ["/entrypoint.sh"],
-    files = [":entrypoint.sh"],
-    visibility = ["//visibility:public"],
-)
-
-sh_binary(
-    name = "apply-spark-rbac",
-    srcs = [":apply-spark-rbac.sh"],
+    files = [
+        ":entrypoint.sh",
+        "@jq//file",
+    ],
+    symlinks = {
+        "/usr/local/bin/jq": "/jq-linux64",
+    },
     visibility = ["//visibility:public"],
 )

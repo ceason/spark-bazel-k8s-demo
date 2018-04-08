@@ -59,3 +59,11 @@ filegroup (
            "http://apache.mirrors.ionfish.org/hadoop/common/hadoop-2.7.5/hadoop-2.7.5.tar.gz",
        ]
     )
+
+    native.http_file(
+        name = "jq",
+        sha256 = "c6b3a7d7d3e7b70c6f51b706a3b90bd01833846c54d32ca32f0027f00226ff6d",
+        urls = ["https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64"],
+        executable = True,
+#        urls = ["http://http.us.debian.org/debian/pool/main/j/jq/jq_1.5+dfsg-1.3_amd64.deb"]
+    )

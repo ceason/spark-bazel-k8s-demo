@@ -21,16 +21,3 @@ k8s_object(
     },
     template = ":templatetest-deployment.yaml",
 )
-
-k8s_object(
-    name = "configmap",
-    template = ":templatetest-defaults-configmap.yaml",
-)
-
-k8s_objects(
-    name = "k8s-manifests",
-    objects = [
-        ":configmap",
-        ":deployment",
-    ],
-)
