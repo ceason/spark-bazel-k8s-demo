@@ -1,0 +1,38 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- {kind: Group, apiGroup: rbac.authorization.k8s.io, name: "system:serviceaccounts:kube-system"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-nodeport
+  namespace: kube-system
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 5000
+    nodePort: 30001
+  selector:
+    kubernetes.io/minikube-addons: registry
