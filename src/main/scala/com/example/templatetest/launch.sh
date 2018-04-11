@@ -22,7 +22,7 @@ echo "
 	* Building docker image
 	* Deploying k8s manifests
 "
-bazel run //src/main/scala/com/example/templatetest:deployment|kubectl delete -f -
+bazel run //src/main/scala/com/example/templatetest:deployment|kubectl delete -f -||true
 bazel run //src/main/scala/com/example/templatetest:deployment|kubectl apply -f -
 
 echo "
